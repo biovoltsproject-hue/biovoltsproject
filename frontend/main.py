@@ -3,7 +3,7 @@
 nome = "Edson 67"
 
 #Autor Gustavo
-nome2 = 'Gusta7'
+nome2 = 'Gusta67'
 print (nome2) 
 
 
