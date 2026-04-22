@@ -2,7 +2,7 @@
 # @author: Jhonatas de Oliveira
 # @author: Jhonatas de Oliveira
 # @author: Jhonatas de Oliveira
-# @author: Jhonatas de Oliveira
+# @author: Edson Lima
 # @date: 21/04/2026
 # @description: Este é o ponto de entrada para a aplicação do painel de controle do sistema de energia solar portátil. 
 # Ele define a classe App, que é uma janela principal do tkinter configurada com um tema escuro e um layout fixo.
