@@ -8,4 +8,7 @@ print (nome2)
 
 
 #jhon
-nome = "jhon 67"
+nome4 = "jhon 67"
+
+ #ronalthy
+ nome3 = "ronalthy 12"
