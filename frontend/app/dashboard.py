@@ -60,10 +60,12 @@ class SolarDashboard(tk.Canvas):
         for xi in [30, cx-220, cx+220, self.W-30]:
             self.create_line(30, 50, cx-220, 50, fill=CYAN_DIM, width=1)
             self.create_oval(xi-3, 47, xi+3, 53, fill=CYAN, outline="")
-        neon_text(self, cx, 38, "PAINEL DE ENERGIA SOLAR PORTÁTIL",
+        neon_text(self, cx, 38, "MALETA SOLAR BIOVOLTS", #Mudança no nome do painel
                   CYAN, ("Arial Black", 20, "bold"))
-        self.create_text(cx, 52, text="PAINEL DE ENERGIA SOLAR PORTÁTIL",
-                         fill=CYAN_DIM, font=("Arial Black", 8, "bold"), anchor="center")
+        #Autor: Edson.
+        # As duas linhas abaixo estão duplicando o texto do embaixo do título.
+        #self.create_text(cx, 52, text="PAINEL DE ENERGIA SOLAR PORTÁTIL",
+                         #fill=CYAN_DIM, font=("Arial Black", 8, "bold"), anchor="center")
 
     # ── Card Solar ────────────────────────────────────────────
     # Desenha o card de status solar, com um sol animado e um badge de status
@@ -72,7 +74,7 @@ class SolarDashboard(tk.Canvas):
         cx = (x1+x2)//2
         self.create_rectangle(x1, y1, x2, y2, fill=BG_PANEL, outline="")
         neon_rect(self, x1, y1, x2, y2, YELLOW, radius=12, layers=3, width=2)
-        self.create_text(cx, y1+22, text="SOLAR STATUS", fill=YELLOW, font=FONT_SMALL, anchor="center")
+        self.create_text(cx, y1+22, text="STATUS SOLAR", fill=YELLOW, font=FONT_SMALL, anchor="center") #mudança em SOLAR STATUS para STATUS SOLAR
         self._sun(cx, (y1+y2)//2 - 20, 38)
         self._badge(x1, y2, cx, "ATIVO", GREEN, GREEN_DIM)
 
@@ -96,7 +98,8 @@ class SolarDashboard(tk.Canvas):
         cx = (x1+x2)//2
         self.create_rectangle(x1, y1, x2, y2, fill=BG_PANEL, outline="")
         neon_rect(self, x1, y1, x2, y2, CYAN, radius=12, layers=3, width=2)
-        self.create_text(cx, y1+22, text="BATERIA LEVEL", fill=CYAN, font=FONT_SMALL, anchor="center")
+        #mudança em BATERIA LEVEL para PORCENTAGEM DE BATERIA
+        self.create_text(cx, y1+22, text="BATERIA", fill=CYAN, font=FONT_SMALL, anchor="center")
         neon_text(self, cx, (y1+y2)//2-30, f"{self._battery}%",
                   WHITE, ("Arial Black", 52, "bold"))
         self._battery_bar(cx, y2-45, 180, 32)
@@ -120,7 +123,8 @@ class SolarDashboard(tk.Canvas):
         cx = (x1+x2)//2
         self.create_rectangle(x1, y1, x2, y2, fill=BG_PANEL, outline="")
         neon_rect(self, x1, y1, x2, y2, ORANGE, radius=12, layers=3, width=2)
-        self.create_text(cx, y1+22, text="OUTPUT STATUS", fill=ORANGE, font=FONT_SMALL, anchor="center")
+        #Mudança em OUTPUT STATUS para STATUS DA SAÍDA
+        self.create_text(cx, y1+22, text=" STATUS DA SAÍDA", fill=ORANGE, font=FONT_SMALL, anchor="center")
         self._plug(cx, (y1+y2)//2 - 18)
         self._badge(x1, y2, cx, "CONECTADO", ORANGE, ORANGE_DIM, font_size=13)
 
@@ -161,8 +165,11 @@ class SolarDashboard(tk.Canvas):
         for xi, x2_ in [(30, x1), (x2, W-30)]:
             self.create_line(xi, cy, x2_, cy, fill=CYAN_DIM, width=1, dash=(4,4))
             self.create_oval(xi-4, cy-4, xi+4, cy+4, fill=CYAN, outline="")
-        self.create_text(cx-70, cy, text="TEMPO RESTANTE", fill=WHITE, font=("Arial Black",12,"bold"), anchor="center")
-        self.create_text(cx+50, cy, text="2h 30min",       fill=CYAN,  font=("Arial Black",18,"bold"), anchor="center")
+            #Autor Edson
+            #Espaçamento de "Tempo Restante" e "2h 30min" aumentada,
+            #Não estando mais tão próximas uma da outra.
+        self.create_text(cx-100, cy, text="TEMPO RESTANTE:", fill=WHITE, font=("Arial Black",12,"bold"), anchor="center")
+        self.create_text(cx+80, cy, text="2h 30min",       fill=CYAN,  font=("Arial Black",18,"bold"), anchor="center")
 
     # ── Rodapé ────────────────────────────────────────────────
     # Desenha o rodapé com três seções: data/hora, modo ativo e nível de bateria, cada uma com um ícone e texto
@@ -171,7 +178,7 @@ class SolarDashboard(tk.Canvas):
         data = [
             (25,  388, 255, 460, icon_calendar, now.strftime("%d/%m/%Y"), now.strftime("%H:%M")),
             (275, 388, 525, 460, icon_gear,     "MODO",  "ATIVO"),
-            (545, 388, 775, 460, icon_bars,     "NIVEL", f"{self._battery}%"),
+            (545, 388, 775, 460, icon_bars,     "BATERIA", f"{self._battery}%"),
         ]
         # Para cada seção do rodapé, desenha um retângulo de fundo, um ícone, uma linha divisória e o texto correspondente
         for x1, y1, x2, y2, icon_fn, label, value in data:
