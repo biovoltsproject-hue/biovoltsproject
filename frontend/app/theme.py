@@ -1,19 +1,17 @@
 # theme.py — Cores e fontes do painel
 
-BG_DEEP    = "#020d1a"
-BG_MID     = "#041225"
-BG_PANEL   = "#050f1f"
-CYAN       = "#00d4ff"
-CYAN_DIM   = "#004a66"
-YELLOW     = "#ffd000"
-YELLOW_DIM = "#5a4800"
-GREEN      = "#00ff44"
-GREEN_DIM  = "#004d14"
-ORANGE     = "#ff6b00"
-ORANGE_DIM = "#4d2000"
-WHITE      = "#e8f4ff"
-MUTED      = "#1a3a5c"
-TEXT_DIM   = "#4a7a9b"
+BG_DEEP    = "#000000"
+BG_PANEL   = "#050000"
+RED        = "#FF0000"
+RED_DIM    = "#660000"
+RED_DARK   = "#220000"
+WHITE      = "#FFFFFF"
+MUTED      = "#110000"
+TEXT_DIM   = "#880000"
 
-FONT_SMALL = ("Arial Black", 11, "bold")
-FONT_MICRO = ("Courier",      9)
+FONT_LARGE = ("Consolas", 72, "bold")
+FONT_TITLE = ("Consolas", 32, "bold")
+FONT_SUBTITLE = ("Consolas", 16, "bold")
+FONT_MED = ("Consolas", 24, "bold")
+FONT_SMALL = ("Consolas", 14, "bold")
+FONT_MICRO = ("Consolas", 10)

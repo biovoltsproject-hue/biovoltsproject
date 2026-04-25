@@ -2,6 +2,8 @@
 # @author: Jhonatas de Oliveira
 # @author: Ronalthy Vasques
 # @author: Edson Lima
+# @author: Yurhi Prestes
+# @author: Luiz Gabriel
 # @date: 21/04/2026
 # @description: Este é o ponto de entrada para a aplicação do painel de controle do sistema de energia solar portátil. 
 # Ele define a classe App, que é uma janela principal do tkinter configurada com um tema escuro e um layout fixo.
@@ -19,10 +21,17 @@ class App(ctk.CTk):
     def __init__(self):
         super().__init__()
         self.title("Painel de Energia Solar Portátil")
-        self.geometry("800x480")
-        self.resizable(False, False)
         self.configure(fg_color=BG_DEEP)
-        SolarDashboard(self).pack()
+        
+        # Ativa o modo de tela cheia (fullscreen)
+        self.attributes("-fullscreen", True)
+        
+        # Permite fechar o aplicativo apertando a tecla ESC
+        self.bind("<Escape>", lambda e: self.destroy())
+        
+        # pack(expand=True) garante que o painel fique centralizado
+        # caso a tela seja maior que os 1024x600 originais do design.
+        SolarDashboard(self).pack(expand=True)
 
 if __name__ == "__main__":
     App().mainloop()
