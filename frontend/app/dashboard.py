@@ -180,6 +180,7 @@ class SolarDashboard(tk.Canvas):
             (275, 388, 525, 460, icon_gear,     "MODO",  "ATIVO"),
             (545, 388, 775, 460, icon_bars,     "BATERIA", f"{self._battery}%"),
         ]
+        
         # Para cada seção do rodapé, desenha um retângulo de fundo, um ícone, uma linha divisória e o texto correspondente
         for x1, y1, x2, y2, icon_fn, label, value in data:
             cx, cy = (x1+x2)//2, (y1+y2)//2
