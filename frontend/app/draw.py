@@ -1,12 +1,7 @@
-# draw.py — Funções de desenho neon e ícones
-# 
-# @date: 21/04/2026
-# @description: Este módulo define funções para desenhar elementos neon e ícones em uma interface gráfica tkinter.
-# @version: 1.0
-
-
+# draw.py — Funções de desenho neon e ícones para o tema Cyberpunk Red
 import math
 from theme import *
+
 
 # Função para desenhar um retângulo com efeito neon
 def neon_rect(canvas, x1, y1, x2, y2, color, radius=10, layers=4, width=2): 
@@ -30,35 +25,47 @@ def _rrect(canvas, x1, y1, x2, y2, r, color, width=2):
     canvas.create_line(x2,y1+r, x2,y2-r, fill=color, width=width)
 # Função para desenhar texto com efeito neon
 def neon_text(canvas, x, y, text, color, font, anchor="center"):
-    for dx, dy in [(2,2),(-2,-2),(2,-2),(-2,2),(0,3),(0,-3),(3,0),(-3,0)]:
-        canvas.create_text(x+dx, y+dy, text=text, fill=BG_DEEP, font=font, anchor=anchor)
+    canvas.create_text(x+3, y+3, text=text, fill=BG_DEEP, font=font, anchor=anchor)
     canvas.create_text(x, y, text=text, fill=color, font=font, anchor=anchor)
 # Funções para desenhar ícones simples
 def icon_calendar(canvas, cx, cy):
-    w, h = 28, 26
-    x1, y1 = cx-w//2, cy-h//2
-    canvas.create_rectangle(x1, y1, x1+w, y1+h, fill="", outline=CYAN, width=2)
-    canvas.create_rectangle(x1, y1, x1+w, y1+8, fill=CYAN_DIM, outline=CYAN, width=1)
-    for gx in [x1+7, x1+14, x1+21]:
-        for gy in [y1+13, y1+19]:
-            canvas.create_rectangle(gx-2, gy-2, gx+2, gy+2, fill=CYAN, outline="")
-# Função para desenhar um ícone de engrenagem
-def icon_gear(canvas, cx, cy):
-    
-    r_out, r_in, teeth = 14, 9, 8
-    for i in range(teeth): 
-        a1 = math.radians(i * 360/teeth) # ângulo para cada dente
-        a2 = math.radians(i * 360/teeth + 15) # ângulo para a ponta do dente
-        canvas.create_line(cx+r_in*math.cos(a1), cy+r_in*math.sin(a1),
-                           cx+r_out*math.cos(a1), cy+r_out*math.sin(a1),
-                           fill=CYAN, width=3)
-        canvas.create_line(cx+r_out*math.cos(a1), cy+r_out*math.sin(a1),
-                           cx+r_out*math.cos(a2), cy+r_out*math.sin(a2),
-                           fill=CYAN, width=3)
-    canvas.create_oval(cx-r_in, cy-r_in, cx+r_in, cy+r_in, fill=BG_PANEL, outline=CYAN, width=2)
-    canvas.create_oval(cx-5, cy-5, cx+5, cy+5, fill=CYAN, outline="")
-# Função para desenhar um ícone de barras de sinal
-def icon_bars(canvas, cx, cy):
-    for ox, h in [(0,18),(8,12),(16,7),(24,3)]: #itera sobre as barras com deslocamento e altura
-        bx, by = cx-12+ox, cy+10
-        canvas.create_rectangle(bx, by-h, bx+5, by, fill=CYAN, outline="")
+   
+    w, h = 34, 30
+    x1, y1 = cx-w//2, cy-h//2 + 3
+    canvas.create_rectangle(x1, y1, x1+w, y1+h, fill="", outline=RED, width=3)
+    canvas.create_line(x1, y1+8, x1+w, y1+8, fill=RED, width=3)
+    canvas.create_line(cx-8, y1-6, cx-8, y1+3, fill=RED, width=3)
+    canvas.create_line(cx+8, y1-6, cx+8, y1+3, fill=RED, width=3)
+    for gx in [cx-8, cx, cx+8]:
+        for gy in [y1+15, y1+23]:
+            canvas.create_rectangle(gx-2, gy-2, gx+2, gy+2, fill=RED, outline="")
+
+def icon_weather(canvas, cx, cy):
+    canvas.create_oval(cx-10, cy-14, cx+14, cy+14, fill="", outline=RED, width=3)
+    for i in range(8):
+        angle = i * (math.pi / 4)
+        x1 = cx + math.cos(angle) * 20
+        y1 = cy + math.sin(angle) * 20
+        x2 = cx + math.cos(angle) * 28
+        y2 = cy + math.sin(angle) * 28
+        canvas.create_line(x1, y1, x2, y2, fill=RED, width=3)
+
+
+def icon_plug(canvas, cx, cy):
+    pw, ph = 28, 22
+    cy -= 3
+    # Corpo
+    pts = [cx-pw//2, cy-ph//2, cx+pw//2, cy-ph//2, cx+pw//2, cy+ph//2, cx+pw//4, cy+ph, cx-pw//4, cy+ph, cx-pw//2, cy+ph//2]
+    canvas.create_polygon(pts, fill="", outline=RED, width=3)
+    canvas.create_line(cx-pw//2, cy-ph//2+6, cx+pw//2, cy-ph//2+6, fill=RED, width=2)
+    # Pinos
+    canvas.create_line(cx-6, cy-ph//2, cx-6, cy-ph//2-12, fill=RED, width=3)
+    canvas.create_line(cx+6, cy-ph//2, cx+6, cy-ph//2-12, fill=RED, width=3)
+    # Fio
+    canvas.create_line(cx, cy+ph, cx, cy+ph+16, fill=RED, width=3)
+
+def icon_clock(canvas, cx, cy):
+    canvas.create_oval(cx-10, cy-10, cx+10, cy+10, fill="", outline=RED, width=3)
+    canvas.create_line(cx, cy, cx, cy-8, fill=RED, width=3)
+    canvas.create_line(cx, cy, cx+10, cy+6, fill=RED, width=3)
+    canvas.create_oval(cx-3, cy-3, cx+3, cy+3, fill=RED, outline="")
