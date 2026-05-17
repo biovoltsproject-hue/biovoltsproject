@@ -24,7 +24,7 @@ class App(ctk.CTk):
         self.configure(fg_color=BG_DEEP)
         
         # Ativa o modo de tela cheia (fullscreen)
-        self.attributes("-fullscreen", True)
+        self.attributes("-fullscreen", False)
         
         # Permite fechar o aplicativo apertando a tecla ESC
         self.bind("<Escape>", lambda e: self.destroy())

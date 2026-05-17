@@ -73,66 +73,67 @@ class SolarDashboard(tk.Canvas):
         ]
         
         # Grade sutil (em movimento)
-        go = int(self._grid_offset)
-        for x in range(0, W + 64, 64): self.create_line(x - go, 0, x - go, H, fill=MUTED, width=1)
-        for y in range(0, H + 64, 64): self.create_line(0, y - go, W, y - go, fill=MUTED, width=1)
+        #go = int(self._grid_offset)
+        #for x in range(0, W + 64, 64): self.create_line(x - go, 0, x - go, H, fill=CINZAESCURO1, width=1)
+        #for y in range(0, H + 64, 64): self.create_line(0, y - go, W, y - go, fill=CINZAESCURO1, width=1)
         
         # Partículas de dados (Digital Rain)
         for p in self._particles:
-            self.create_line(p["x"], p["y"], p["x"], p["y"] + p["len"], fill=RED_DARK, width=2)
+            self.create_line(p["x"], p["y"], p["x"], p["y"] + p["len"], fill=DARKCINZA, width=2)
             
         # Linha de Scanner / Radar
-        self.create_line(0, self._scan_y, W, self._scan_y, fill=RED_DIM, width=2)
-        self.create_line(0, self._scan_y - 3, W, self._scan_y - 3, fill=RED_DARK, width=1)
+        #self.create_line(0, self._scan_y, W, self._scan_y, fill=RED_DIM, width=2)
+        #self.create_line(0, self._scan_y - 3, W, self._scan_y - 3, fill=RED_DIM, width=1)
 
         # 1. Linhas de destaque brilhantes no topo e embaixo da borda principal
-        self.create_line(W//2 - 80, 12, W//2 + 80, 12, fill=RED, width=5)
-        self.create_line(W//2 - 30, 17, W//2 + 30, 17, fill=RED_DIM, width=2)
+        self.create_line(W//2 - 80, 12, W//2 + 80, 12, fill=WHITE, width=5)
+        self.create_line(W//2 - 30, 17, W//2 + 30, 17, fill=WHITE, width=2)
         
-        self.create_line(W//2 - 80, H-12, W//2 + 80, H-12, fill=RED, width=5)
-        self.create_line(W//2 - 30, H-17, W//2 + 30, H-17, fill=RED_DIM, width=2)
+        self.create_line(W//2 - 80, H-12, W//2 + 80, H-12, fill=WHITE, width=5)
+        self.create_line(W//2 - 30, H-17, W//2 + 30, H-17, fill=WHITE, width=2)
         
         # 2. Barras diagonais (///) nos cantos do painel
         for i in range(6):
             # Topo esquerdo
-            self.create_line(60 + i*12, 30, 66 + i*12, 16, fill=RED_DIM, width=3)
+            self.create_line(60 + i*12, 30, 66 + i*12, 16, fill=CINZAESCURO, width=3)
             # Topo direito
-            self.create_line(W - 130 + i*12, 30, W - 124 + i*12, 16, fill=RED_DIM, width=3)
+            self.create_line(W - 130 + i*12, 30, W - 124 + i*12, 16, fill=CINZAESCURO, width=3)
             # Baixo esquerdo
-            self.create_line(60 + i*12, H-16, 66 + i*12, H-30, fill=RED_DIM, width=3)
+            self.create_line(60 + i*12, H-16, 66 + i*12, H-30, fill=CINZAESCURO, width=3)
             # Baixo direito
-            self.create_line(W - 130 + i*12, H-16, W - 124 + i*12, H-30, fill=RED_DIM, width=3)
+            self.create_line(W - 130 + i*12, H-16, W - 124 + i*12, H-30, fill=CINZAESCURO, width=3)
             
         # 3. Pequenos grids de pontos (matrizes sci-fi) nas laterais
         for r in range(5):
             for c in range(2):
                 # Esquerda superior e inferior
-                self.create_oval(25 + c*8, 160 + r*8, 28 + c*8, 163 + r*8, fill=RED_DIM, outline="")
-                self.create_oval(25 + c*8, 420 + r*8, 28 + c*8, 423 + r*8, fill=RED_DIM, outline="")
+                self.create_oval(25 + c*8, 160 + r*8, 28 + c*8, 163 + r*8, fill=CINZA, outline="")
+                self.create_oval(25 + c*8, 420 + r*8, 28 + c*8, 423 + r*8, fill=CINZA, outline="")
                 # Direita superior e inferior
-                self.create_oval(W - 40 + c*8, 160 + r*8, W - 37 + c*8, 163 + r*8, fill=RED_DIM, outline="")
-                self.create_oval(W - 40 + c*8, 420 + r*8, W - 37 + c*8, 423 + r*8, fill=RED_DIM, outline="")
+                self.create_oval(W - 40 + c*8, 160 + r*8, W - 37 + c*8, 163 + r*8, fill=CINZA, outline="")
+                self.create_oval(W - 40 + c*8, 420 + r*8, W - 37 + c*8, 423 + r*8, fill=CINZA, outline="")
 
     def _header(self):
         cx = self.W // 2 # Centro horizontal para o título e elementos do header
         # Linhas decorativas do topo
-        self.create_line(60, 45, cx-220, 45, fill=RED_DIM, width=2)
-        self.create_line(cx+220, 45, self.W-60, 45, fill=RED_DIM, width=2)
+        self.create_line(60, 45, cx-220, 45, fill=CINZAESCURO, width=2)
+        self.create_line(cx+220, 45, self.W-60, 45, fill=CINZAESCURO, width=2)
         
-        self.create_oval(cx-220-5, 42, cx-220+5, 48, fill=RED, outline="")
-        self.create_oval(cx+220-5, 42, cx+220+5, 48, fill=RED, outline="")
+        self.create_oval(cx-220-5, 42, cx-220+5, 48, fill=CINZAESCURO, outline="")
+        self.create_oval(cx+220-5, 42, cx+220+5, 48, fill=CINZAESCURO, outline="")
         
         # Colchetes decorativos [ ] ao redor do título
-        self.create_text(cx-180, 40, text="[", fill=RED, font=FONT_TITLE, anchor="center")
-        self.create_text(cx+180, 40, text="]", fill=RED, font=FONT_TITLE, anchor="center")
+        self.create_text(cx-180, 40, text="[", fill=CINZAESCURO, font=FONT_TITLE, anchor="center")
+        self.create_text(cx+180, 40, text="]", fill=CINZAESCURO, font=FONT_TITLE, anchor="center")
             
-        neon_text(self, cx-60, 40, "BIO", GREEN, FONT_TITLE) # Título central com efeito neon
-        neon_text(self, cx + 40, 40, "VOLTS", RED, FONT_TITLE)
-        self.create_text(cx, 80, text="SISTEMA DE ENERGIA PORTÁTIL", fill=RED, font=FONT_SUBTITLE, anchor="center")
+        neon_text(self, cx-50, 40, "Bio", GREEN, FONTEFINA) # Título central com efeito neon
+        neon_text(self, cx + 30, 40, "Volts",VERDE_ESCURO, FONT_TITLE)
+        self.create_text(cx, 70, text="SUA ENERGIA SOLAR PORTÁTIL", fill=WHITE, font=FONT_SUBTITLE, anchor="center")
         
         # Micro textos decorativos
-        self.create_text(60, 25, text="SYS.ON // V1.0", fill=RED_DARK, font=FONT_MICRO, anchor="w")
-        self.create_text(self.W-60, 25, text="PWR.RDY", fill=RED_DARK, font=FONT_MICRO, anchor="e")
+        #self.create_text(60, 25, text="SYS.ON // V1.0", fill=CINZA, font=FONT_MICRO, anchor="w")
+        #self.create_text(self.W-60, 25, text="PWR.RDY", fill=CINZA, font=FONT_MICRO, anchor="e")
+
     def _left_card(self):
         x1, y1, x2, y2 = 40, 120, 290, 480
         cx = (x1+x2)//2
@@ -140,13 +141,13 @@ class SolarDashboard(tk.Canvas):
         
         
         icon_weather(self, cx, cy - 50)
-        self.create_text(cx, cy + 30, text="PLACA SOLAR", fill=RED, font=FONT_MED, anchor="center")
+        self.create_text(cx, cy + 30, text="PLACA SOLAR", fill=WHITE, font=FONT_MED, anchor="center")
         
         self.create_text(cx, cy + 80, text="CARREGANDO", fill=GREEN, font=FONT_MED, anchor="center")
-        self.create_text(cx, cy + 115, text="CARREGANDO PELO MODULO SOLAR", fill=RED_DIM, font=FONT_MICRO, anchor="center")
+        self.create_text(cx, cy + 115, text="CARREGANDO PELO MODULO SOLAR", fill=WHITE, font=FONT_MICRO, anchor="center")
 
         # Linha decorativa
-        self.create_line(cx-50, cy+55, cx+50, cy+55, fill=RED_DIM, width=2)
+        self.create_line(cx-50, cy+55, cx+50, cy+55, fill=CINZAESCURO, width=1)
 
     def _center_card(self):
         x1, y1, x2, y2 = 320, 120, 704, 480
@@ -165,16 +166,16 @@ class SolarDashboard(tk.Canvas):
                             start=start, extent=10, style="arc", outline=GREEN, width=4)
         
         # 2. Aro sólido brilhante intermediário
-        self.create_oval(cx-r_mid, cy-r_mid, cx+r_mid, cy+r_mid, fill="", outline=RED_DIM, width=2)
+        self.create_oval(cx-r_mid, cy-r_mid, cx+r_mid, cy+r_mid, fill="", outline=WHITE, width=2)
         
         # 3. Pequenos ticks internos girando ao contrário
         for i in range(36):
             start = -self._angle * 1.5 + i * 10
             self.create_arc(cx-r_inner, cy-r_inner, cx+r_inner, cy+r_inner, 
-                            start=start, extent=4, style="arc", outline=RED_DARK, width=6)
-                            
+                            start=start, extent=4, style="arc", outline=VERDE_ESCURO, width=6)
+                                    
         # 4. Aro interno de fundo para a bateria
-        self.create_oval(cx-r_bar, cy-r_bar, cx+r_bar, cy+r_bar, fill="", outline=RED_DIM, width=10)
+        self.create_oval(cx-r_bar, cy-r_bar, cx+r_bar, cy+r_bar, fill="", outline=CINZA, width=10)
         
         # 5. Aro preenchido da bateria (pulsando)
         pw = 10 + math.sin(self._pulse)*2
@@ -183,8 +184,9 @@ class SolarDashboard(tk.Canvas):
                         start=90, extent=-extent, style="arc", outline=GREEN, width=pw)
 
         # Informações Centrais
-        self.create_text(cx, cy - 35, text=f"{int(self._battery)}%", fill=RED, font=FONT_LARGE, anchor="center")
-        self.create_text(cx, cy + 40, text="BATERIA", fill=RED, font=FONT_MED, anchor="center")
+        self.create_text(cx - 10, cy - 35, text=f"{int(self._battery)}", fill=WHITE, font=FONT_LARGE, anchor="center")
+        self.create_text(cx, cy + 40, text="BATERIA", fill=WHITE, font=FONT_MED, anchor="center")
+        self.create_text(cx + 55, cy -12, text="%", fill=WHITE, font=FONT_MED, anchor="center")
         
 
     def _right_card(self):
@@ -193,10 +195,10 @@ class SolarDashboard(tk.Canvas):
         cy = (y1+y2)//2
         
         icon_plug(self, cx, cy - 50)
-        self.create_text(cx, cy + 30, text="DISPOSITIVO", fill=RED, font=FONT_MED, anchor="center")
+        self.create_text(cx, cy + 30, text="DISPOSITIVO", fill=WHITE, font=FONT_MED, anchor="center")
         self.create_text(cx, cy + 80, text="CONECTADO", fill=GREEN, font=FONT_MED, anchor="center")
-        self.create_text(cx, cy + 115, text="CARREGANDO...", fill=RED_DIM, font=FONT_MICRO, anchor="center")
-        self.create_line(cx-50, cy+55, cx+50, cy+55, fill=RED_DIM, width=2)
+        self.create_text(cx, cy + 115, text="CARREGANDO...", fill=WHITE, font=FONT_MICRO, anchor="center")
+        self.create_line(cx-50, cy+55, cx+50, cy+55, fill=CINZAESCURO, width=1)
 
     def _top_bar_clock(self):
         x1, y1, x2, y2 = -470, -530, 774, 580 # Centralizado horizontalmente na parte inferior
@@ -206,10 +208,10 @@ class SolarDashboard(tk.Canvas):
         icon_cx = cx
         icon_clock(self, icon_cx, cy)
         
-        #self.create_text(cx - 50, cy, text="HORA", fill=RED, font=FONT_MED, anchor="center")
+        #self.create_text(cx - 50, cy, text="HORA", fill=WHITE, font=FONT_MED, anchor="center")
         
         now = datetime.now()
-        self.create_text(cx + 80, cy, text=now.strftime("%H:%M:%S"), fill=RED, font=("Consolas", 10, "bold"), anchor="center")
+        self.create_text(cx + 50, cy, text=now.strftime("%H:%M:%S"), fill=WHITE, font=("Consolas", 10, "bold"), anchor="center")
 
     def _bottom_bar(self):
         x1, y1, x2, y2 = 100, 500, 774, 580
@@ -219,10 +221,10 @@ class SolarDashboard(tk.Canvas):
         now = datetime.now()
         
         
-        self.create_text(cx + 80, cy, text="49 min para acarga total.", fill=GREEN, font=("Consolas", 12, "bold"), anchor="center")
+        self.create_text(cx + 80, cy, text="49 min para a carga total.", fill=WHITE, font=("Consolas", 12, "bold"), anchor="center")
 
-        self.create_line(x1-100, cy, cx-50, cy, fill=RED_DIM, width=2, dash=(6,4))
-        self.create_line(cx+600, cy, x2-120, cy, fill=RED_DIM, width=2, dash=(6,4))
+        self.create_line(x1-100, cy, cx-50, cy, fill=CINZAESCURO, width=2, dash=(6,4))
+        self.create_line(cx+600, cy, x2-120, cy, fill=CINZAESCURO, width=2, dash=(6,4))
         
-        self.create_oval(cx-55, cy-3, cx-45, cy+3, fill=RED, outline="")
-        self.create_oval(cx+205, cy-3, cx+215, cy+3, fill=RED, outline="")
+        self.create_oval(cx-55, cy-3, cx-45, cy+3, fill=CINZAESCURO, outline="")
+        self.create_oval(cx+205, cy-3, cx+215, cy+3, fill=CINZAESCURO, outline="")
