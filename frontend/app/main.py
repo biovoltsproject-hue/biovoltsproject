@@ -26,7 +26,7 @@ class App(ctk.CTk):
         self.configure(fg_color=BG_DEEP)
 
         # Tela cheia sem barra do sistema operacional
-        self.attributes("-fullscreen", True)
+       # self.attributes("-fullscreen", True)
 
         # Esconde o cursor (modo quiosque embarcado)
         self.config(cursor="none")
