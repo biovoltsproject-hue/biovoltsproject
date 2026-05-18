@@ -7,6 +7,7 @@ from datetime import datetime
 from theme import *
 from draw import *
 
+
 class SolarDashboard(tk.Canvas):
     W, H = 1024, 600
 
@@ -14,35 +15,40 @@ class SolarDashboard(tk.Canvas):
         super().__init__(master, width=self.W, height=self.H,
                          bg=BG_DEEP, highlightthickness=0, bd=0)
         self.data_queue = data_queue
-        
+
         # Estado interno de dados (alimentado pelo backend)
         self._battery = 0.0
         self._status = "AGUARDANDO SINAL..."
         self._time_to_full = 0
-        
+
         # Estado de animação puramente visual
         self._angle = 0
         self._pulse = 0
         self._grid_offset = 0
         self._scan_y = 0
-        self._particles = [{"x": random.randint(0, self.W), "y": random.randint(0, self.H), "speed": random.uniform(1, 4), "len": random.randint(5, 20)} for _ in range(40)]
-        
+        self._particles = [
+            {
+                "x": random.randint(0, self.W),
+                "y": random.randint(0, self.H),
+                "speed": random.uniform(1, 4),
+                "len": random.randint(5, 20),
+            }
+            for _ in range(40)
+        ]
+
         self._draw_all()
         self._animate_visuals()
-        self._poll_backend_data() # Novo loop para ler dados
+        self._poll_backend_data()
 
     def _poll_backend_data(self):
         """Lê os dados do backend sem bloquear a interface."""
         try:
-            # Tenta pegar o último pacote da fila
             data = self.data_queue.get_nowait()
             self._battery = data.get("battery", self._battery)
             self._status = data.get("status", self._status)
             self._time_to_full = data.get("time_to_full", 0)
         except queue.Empty:
-            pass # Fila vazia, mantemos os últimos dados lidos
-        
-        # Agenda a próxima leitura
+            pass
         self.after(200, self._poll_backend_data)
 
     def _animate_visuals(self):
@@ -57,18 +63,10 @@ class SolarDashboard(tk.Canvas):
             if p["y"] > self.H:
                 p["y"] = -20
                 p["x"] = random.randint(0, self.W)
-                
-        self._draw_all()
-        self.after(60, self._animate_visuals) # 60fps aprox para fluidez
 
-    # ... Restante do código (_draw_all, _bg, _header, etc.) permanece idêntico ...
-    # Lembre-se apenas de atualizar os textos de UI para usar as variáveis de estado:
-    # Exemplo no _center_card():
-    # self.create_text(cx - 10, cy - 35, text=f"{int(self._battery)}", ...)
-    # Exemplo no _bottom_bar():
-    # self.create_text(cx + 80, cy, text=f"{self._time_to_full} min para a carga total.", ...)
-    
-    # OBS: Pode colar o resto das suas funções de desenho aqui embaixo!
+        self._draw_all()
+        self.after(60, self._animate_visuals)
+
     def _draw_all(self):
         self.delete("all")
         self._bg()
@@ -82,168 +80,128 @@ class SolarDashboard(tk.Canvas):
     def _bg(self):
         W, H = self.W, self.H
         self.create_rectangle(0, 0, W, H, fill=BG_DEEP, outline="")
-        
-        # Borda principal com detalhes sci-fi
-        cut = 30
-        points = [
-            cut, 12,
-            W-cut, 12,
-            W-12, cut,
-            W-12, H-cut,
-            W-cut, H-12,
-            cut, H-12,
-            12, H-cut,
-            12, cut
-        ]
-        
-        # Grade sutil (em movimento)
-        #go = int(self._grid_offset)
-        #for x in range(0, W + 64, 64): self.create_line(x - go, 0, x - go, H, fill=CINZAESCURO1, width=1)
-        #for y in range(0, H + 64, 64): self.create_line(0, y - go, W, y - go, fill=CINZAESCURO1, width=1)
-        
+
         # Partículas de dados (Digital Rain)
         for p in self._particles:
-            self.create_line(p["x"], p["y"], p["x"], p["y"] + p["len"], fill=DARKCINZA, width=2)
-            
-        # Linha de Scanner / Radar
-        #self.create_line(0, self._scan_y, W, self._scan_y, fill=RED_DIM, width=2)
-        #self.create_line(0, self._scan_y - 3, W, self._scan_y - 3, fill=RED_DIM, width=1)
+            self.create_line(p["x"], p["y"], p["x"], p["y"] + p["len"],
+                             fill=DARKCINZA, width=2)
 
-        # 1. Linhas de destaque brilhantes no topo e embaixo da borda principal
-        self.create_line(W//2 - 80, 12, W//2 + 80, 12, fill=WHITE, width=5)
-        self.create_line(W//2 - 30, 17, W//2 + 30, 17, fill=WHITE, width=2)
-        
-        self.create_line(W//2 - 80, H-12, W//2 + 80, H-12, fill=WHITE, width=5)
-        self.create_line(W//2 - 30, H-17, W//2 + 30, H-17, fill=WHITE, width=2)
-        
-        # 2. Barras diagonais (///) nos cantos do painel
+        # Linhas de destaque no topo e embaixo
+        self.create_line(W // 2 - 80, 12, W // 2 + 80, 12, fill=WHITE, width=5)
+        self.create_line(W // 2 - 30, 17, W // 2 + 30, 17, fill=WHITE, width=2)
+        self.create_line(W // 2 - 80, H - 12, W // 2 + 80, H - 12, fill=WHITE, width=5)
+        self.create_line(W // 2 - 30, H - 17, W // 2 + 30, H - 17, fill=WHITE, width=2)
+
+        # Barras diagonais nos cantos
         for i in range(6):
-            # Topo esquerdo
-            self.create_line(60 + i*12, 30, 66 + i*12, 16, fill=CINZAESCURO, width=3)
-            # Topo direito
-            self.create_line(W - 130 + i*12, 30, W - 124 + i*12, 16, fill=CINZAESCURO, width=3)
-            # Baixo esquerdo
-            self.create_line(60 + i*12, H-16, 66 + i*12, H-30, fill=CINZAESCURO, width=3)
-            # Baixo direito
-            self.create_line(W - 130 + i*12, H-16, W - 124 + i*12, H-30, fill=CINZAESCURO, width=3)
-            
-        # 3. Pequenos grids de pontos (matrizes sci-fi) nas laterais
+            self.create_line(60 + i * 12, 30, 66 + i * 12, 16, fill=CINZAESCURO, width=3)
+            self.create_line(W - 130 + i * 12, 30, W - 124 + i * 12, 16, fill=CINZAESCURO, width=3)
+            self.create_line(60 + i * 12, H - 16, 66 + i * 12, H - 30, fill=CINZAESCURO, width=3)
+            self.create_line(W - 130 + i * 12, H - 16, W - 124 + i * 12, H - 30, fill=CINZAESCURO, width=3)
+
+        # Grids de pontos nas laterais
         for r in range(5):
             for c in range(2):
-                # Esquerda superior e inferior
-                self.create_oval(25 + c*8, 160 + r*8, 28 + c*8, 163 + r*8, fill=CINZA, outline="")
-                self.create_oval(25 + c*8, 420 + r*8, 28 + c*8, 423 + r*8, fill=CINZA, outline="")
-                # Direita superior e inferior
-                self.create_oval(W - 40 + c*8, 160 + r*8, W - 37 + c*8, 163 + r*8, fill=CINZA, outline="")
-                self.create_oval(W - 40 + c*8, 420 + r*8, W - 37 + c*8, 423 + r*8, fill=CINZA, outline="")
+                self.create_oval(25 + c * 8, 160 + r * 8, 28 + c * 8, 163 + r * 8, fill=CINZA, outline="")
+                self.create_oval(25 + c * 8, 420 + r * 8, 28 + c * 8, 423 + r * 8, fill=CINZA, outline="")
+                self.create_oval(W - 40 + c * 8, 160 + r * 8, W - 37 + c * 8, 163 + r * 8, fill=CINZA, outline="")
+                self.create_oval(W - 40 + c * 8, 420 + r * 8, W - 37 + c * 8, 423 + r * 8, fill=CINZA, outline="")
 
     def _header(self):
-        cx = self.W // 2 # Centro horizontal para o título e elementos do header
-        # Linhas decorativas do topo
-        self.create_line(60, 45, cx-220, 45, fill=CINZAESCURO, width=2)
-        self.create_line(cx+220, 45, self.W-60, 45, fill=CINZAESCURO, width=2)
-        
-        self.create_oval(cx-220-5, 42, cx-220+5, 48, fill=CINZAESCURO, outline="")
-        self.create_oval(cx+220-5, 42, cx+220+5, 48, fill=CINZAESCURO, outline="")
-        
-        # Colchetes decorativos [ ] ao redor do título
-        self.create_text(cx-180, 40, text="[", fill=CINZAESCURO, font=FONT_TITLE, anchor="center")
-        self.create_text(cx+180, 40, text="]", fill=CINZAESCURO, font=FONT_TITLE, anchor="center")
-            
-        neon_text(self, cx-50, 40, "Bio", GREEN, FONTEFINA) # Título central com efeito neon
-        neon_text(self, cx + 30, 40, "Volts",VERDE_ESCURO, FONT_TITLE)
-        self.create_text(cx, 70, text="SUA ENERGIA SOLAR PORTÁTIL", fill=WHITE, font=FONT_SUBTITLE, anchor="center")
-        
-        # Micro textos decorativos
-        #self.create_text(60, 25, text="SYS.ON // V1.0", fill=CINZA, font=FONT_MICRO, anchor="w")
-        #self.create_text(self.W-60, 25, text="PWR.RDY", fill=CINZA, font=FONT_MICRO, anchor="e")
+        cx = self.W // 2
+        self.create_line(60, 45, cx - 220, 45, fill=CINZAESCURO, width=2)
+        self.create_line(cx + 220, 45, self.W - 60, 45, fill=CINZAESCURO, width=2)
+        self.create_oval(cx - 220 - 5, 42, cx - 220 + 5, 48, fill=CINZAESCURO, outline="")
+        self.create_oval(cx + 220 - 5, 42, cx + 220 + 5, 48, fill=CINZAESCURO, outline="")
+        self.create_text(cx - 180, 40, text="[", fill=CINZAESCURO, font=FONT_TITLE, anchor="center")
+        self.create_text(cx + 180, 40, text="]", fill=CINZAESCURO, font=FONT_TITLE, anchor="center")
+        neon_text(self, cx - 50, 40, "Bio", GREEN, FONTEFINA)
+        neon_text(self, cx + 30, 40, "Volts", VERDE_ESCURO, FONT_TITLE)
+        self.create_text(cx, 70, text="SUA ENERGIA SOLAR PORTÁTIL",
+                         fill=WHITE, font=FONT_SUBTITLE, anchor="center")
 
     def _left_card(self):
         x1, y1, x2, y2 = 40, 120, 290, 480
-        cx = (x1+x2)//2
-        cy = (y1+y2)//2
-        
-        
+        cx = (x1 + x2) // 2
+        cy = (y1 + y2) // 2
+
         icon_weather(self, cx, cy - 50)
         self.create_text(cx, cy + 30, text="PLACA SOLAR", fill=WHITE, font=FONT_MED, anchor="center")
-        
         self.create_text(cx, cy + 80, text="CARREGANDO", fill=GREEN, font=FONT_MED, anchor="center")
-        self.create_text(cx, cy + 115, text="CARREGANDO PELO MODULO SOLAR", fill=WHITE, font=FONT_MICRO, anchor="center")
-
-        # Linha decorativa
-        self.create_line(cx-50, cy+55, cx+50, cy+55, fill=CINZAESCURO, width=1)
+        self.create_text(cx, cy + 115, text="CARREGANDO PELO MODULO SOLAR",
+                         fill=WHITE, font=FONT_MICRO, anchor="center")
+        self.create_line(cx - 50, cy + 55, cx + 50, cy + 55, fill=CINZAESCURO, width=1)
 
     def _center_card(self):
         x1, y1, x2, y2 = 320, 120, 704, 480
-        cx = (x1+x2)//2
-        cy = (y1+y2)//2
-        
+        cx = (x1 + x2) // 2
+        cy = (y1 + y2) // 2
+
         r_outer = 175
-        r_mid   = 160
+        r_mid = 160
         r_inner = 145
-        r_bar   = 125
-        
-        # 1. Aro tracejado externo giratório
+        r_bar = 125
+
+        # Aro tracejado externo giratório
         for i in range(16):
             start = self._angle + i * 22.5
-            self.create_arc(cx-r_outer, cy-r_outer, cx+r_outer, cy+r_outer, 
+            self.create_arc(cx - r_outer, cy - r_outer, cx + r_outer, cy + r_outer,
                             start=start, extent=10, style="arc", outline=GREEN, width=4)
-        
-        # 2. Aro sólido brilhante intermediário
-        self.create_oval(cx-r_mid, cy-r_mid, cx+r_mid, cy+r_mid, fill="", outline=WHITE, width=2)
-        
-        # 3. Pequenos ticks internos girando ao contrário
+
+        # Aro sólido brilhante intermediário
+        self.create_oval(cx - r_mid, cy - r_mid, cx + r_mid, cy + r_mid,
+                         fill="", outline=WHITE, width=2)
+
+        # Ticks internos girando ao contrário
         for i in range(36):
             start = -self._angle * 1.5 + i * 10
-            self.create_arc(cx-r_inner, cy-r_inner, cx+r_inner, cy+r_inner, 
+            self.create_arc(cx - r_inner, cy - r_inner, cx + r_inner, cy + r_inner,
                             start=start, extent=4, style="arc", outline=VERDE_ESCURO, width=6)
-                                    
-        # 4. Aro interno de fundo para a bateria
-        self.create_oval(cx-r_bar, cy-r_bar, cx+r_bar, cy+r_bar, fill="", outline=CINZA, width=10)
-        
-        # 5. Aro preenchido da bateria (pulsando)
-        pw = 10 + math.sin(self._pulse)*2
+
+        # Aro interno de fundo para a bateria
+        self.create_oval(cx - r_bar, cy - r_bar, cx + r_bar, cy + r_bar,
+                         fill="", outline=CINZA, width=10)
+
+        # Aro preenchido da bateria (pulsando)
+        pw = 10 + math.sin(self._pulse) * 2
         extent = (self._battery / 100.0) * 360
-        self.create_arc(cx-r_bar, cy-r_bar, cx+r_bar, cy+r_bar, 
+        self.create_arc(cx - r_bar, cy - r_bar, cx + r_bar, cy + r_bar,
                         start=90, extent=-extent, style="arc", outline=GREEN, width=pw)
 
         # Informações Centrais
-        self.create_text(cx - 10, cy - 35, text=f"{int(self._battery)}", fill=WHITE, font=FONT_LARGE, anchor="center")
+        self.create_text(cx - 10, cy - 35, text=f"{int(self._battery)}",
+                         fill=WHITE, font=FONT_LARGE, anchor="center")
         self.create_text(cx, cy + 40, text="BATERIA", fill=WHITE, font=FONT_MED, anchor="center")
-        self.create_text(cx + 55, cy -12, text="%", fill=WHITE, font=FONT_MED, anchor="center")
-        
+        self.create_text(cx + 55, cy - 12, text="%", fill=WHITE, font=FONT_MED, anchor="center")
 
     def _right_card(self):
         x1, y1, x2, y2 = 734, 120, 984, 480
-        cx = (x1+x2)//2
-        cy = (y1+y2)//2
-        
+        cx = (x1 + x2) // 2
+        cy = (y1 + y2) // 2
+
         icon_plug(self, cx, cy - 50)
         self.create_text(cx, cy + 30, text="DISPOSITIVO", fill=WHITE, font=FONT_MED, anchor="center")
         self.create_text(cx, cy + 80, text="CONECTADO", fill=GREEN, font=FONT_MED, anchor="center")
         self.create_text(cx, cy + 115, text="CARREGANDO...", fill=WHITE, font=FONT_MICRO, anchor="center")
-        self.create_line(cx-50, cy+55, cx+50, cy+55, fill=CINZAESCURO, width=1)
+        self.create_line(cx - 50, cy + 55, cx + 50, cy + 55, fill=CINZAESCURO, width=1)
 
     def _top_bar_clock(self):
-        x1, y1, x2, y2 = -470, -530, 774, 580 # Centralizado horizontalmente na parte inferior
-        cx = (x1+x2)//2 # Centro horizontal da barra inferior
-        cy = (y1+y2)//2   # Centro da barra inferior
-        
-        icon_cx = cx
-        icon_clock(self, icon_cx, cy)
-        
-        #self.create_text(cx - 50, cy, text="HORA", fill=WHITE, font=FONT_MED, anchor="center")
-        
+        x1, y1, x2, y2 = -470, -530, 774, 580
+        cx = (x1 + x2) // 2
+        cy = (y1 + y2) // 2
+
+        icon_clock(self, cx, cy)
         now = datetime.now()
-        self.create_text(cx + 50, cy, text=now.strftime("%H:%M:%S"), fill=WHITE, font=("Consolas", 10, "bold"), anchor="center")
+        self.create_text(cx + 50, cy, text=now.strftime("%H:%M:%S"),
+                         fill=WHITE, font=("Consolas", 10, "bold"), anchor="center")
 
     def _bottom_bar(self):
         x1, y1, x2, y2 = 100, 500, 774, 580
-        cx = (x1+x2)//2
-        cy = (y1+y2)//2 
-        
-        now = datetime.now()
-        
+        cx = (x1 + x2) // 2
+        cy = (y1 + y2) // 2
+
+        # CORREÇÃO: removido o texto hardcoded "49 min para a carga total."
+        # que sobrescrevia o texto dinâmico logo abaixo
         if self._time_to_full > 0:
             texto_tempo = f"{self._time_to_full} min para a carga total."
         elif self._status == "EM USO - DESCARREGANDO":
@@ -251,12 +209,10 @@ class SolarDashboard(tk.Canvas):
         else:
             texto_tempo = "Bateria estabilizada."
 
-        self.create_text(cx + 80, cy, text=texto_tempo, fill=WHITE, font=("Consolas", 12, "bold"), anchor="center")
-        
-        self.create_text(cx + 80, cy, text="49 min para a carga total.", fill=WHITE, font=("Consolas", 12, "bold"), anchor="center")
+        self.create_text(cx + 80, cy, text=texto_tempo,
+                         fill=WHITE, font=("Consolas", 12, "bold"), anchor="center")
 
-        self.create_line(x1-100, cy, cx-50, cy, fill=CINZAESCURO, width=2, dash=(6,4))
-        self.create_line(cx+600, cy, x2-120, cy, fill=CINZAESCURO, width=2, dash=(6,4))
-        
-        self.create_oval(cx-55, cy-3, cx-45, cy+3, fill=CINZAESCURO, outline="")
-        self.create_oval(cx+205, cy-3, cx+215, cy+3, fill=CINZAESCURO, outline="")
+        self.create_line(x1 - 100, cy, cx - 50, cy, fill=CINZAESCURO, width=2, dash=(6, 4))
+        self.create_line(cx + 600, cy, x2 - 120, cy, fill=CINZAESCURO, width=2, dash=(6, 4))
+        self.create_oval(cx - 55, cy - 3, cx - 45, cy + 3, fill=CINZAESCURO, outline="")
+        self.create_oval(cx + 205, cy - 3, cx + 215, cy + 3, fill=CINZAESCURO, outline="")
