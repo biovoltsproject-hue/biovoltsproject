@@ -11,27 +11,41 @@
 # O aplicativo é iniciado chamando a função mainloop() da instância App, que mantém a janela aberta e responsiva para interações do usuário.
 # @version: 1.0
 
+# main.py
+import queue
 import customtkinter as ctk
-from theme     import BG_DEEP
+from theme import BG_DEEP
 from dashboard import SolarDashboard
+from backend.models.sensor_backend import BioVoltsBackend
 
 ctk.set_appearance_mode("dark")
 
 class App(ctk.CTk):
     def __init__(self):
         super().__init__()
-        self.title("Painel de Energia Solar Portátil")
+        self.title("BioVolts - Painel de Energia Solar Portátil")
         self.configure(fg_color=BG_DEEP)
+        self.attributes("-fullscreen", False)
         
-        # Ativa o modo de tela cheia (fullscreen)
-        self.attributes("-fullscreen", True)
+        # 1. Cria a fila de comunicação thread-safe
+        self.data_queue = queue.Queue()
         
-        # Permite fechar o aplicativo apertando a tecla ESC
-        self.bind("<Escape>", lambda e: self.destroy())
+        # 2. Inicializa e inicia o Backend em background
+        self.backend = BioVoltsBackend(self.data_queue)
+        self.backend.start()
         
-        # pack(expand=True) garante que o painel fique centralizado
-        # caso a tela seja maior que os 1024x600 originais do design.
-        SolarDashboard(self).pack(expand=True) 
+        # 3. Inicializa o Dashboard passando a fila
+        self.dashboard = SolarDashboard(self, self.data_queue)
+        self.dashboard.pack(expand=True)
         
+        # Eventos de encerramento seguro
+        self.bind("<Escape>", lambda e: self._quit())
+        self.protocol("WM_DELETE_WINDOW", self._quit)
+        
+    def _quit(self):
+        self.backend.stop() # Para a thread do sensor graciosamente
+        self.destroy()
+
 if __name__ == "__main__":
-    App().mainloop()
+    app = App()
+    app.mainloop()
