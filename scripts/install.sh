@@ -1,18 +1,17 @@
 #!/bin/bash
 # install.sh — Instalação completa do BioVolts no Raspberry Pi
-# Execute com: bash install.sh
-
-set -e  # Para em caso de erro
+set -e
 
 echo "================================================"
 echo "  BioVolts — Instalador para Raspberry Pi"
 echo "================================================"
 
-# Diretório onde o projeto está (mesmo diretório do script)
-PROJECT_DIR="$(cd "$(dirname "$0")" && pwd)"
+PROJECT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
 APP_DIR="$PROJECT_DIR/frontend/app"
-SERVICE_FILE="/etc/systemd/system/biovolts.service"
 USER=$(whoami)
+HOME_DIR=$(eval echo ~$USER)
+AUTOSTART_DIR="$HOME_DIR/.config/autostart"
+AUTOSTART_FILE="$AUTOSTART_DIR/biovolts.desktop"
 
 echo ""
 echo "[1/5] Atualizando o sistema..."
@@ -32,42 +31,43 @@ echo "[4/5] Instalando dependências Python..."
 pip install customtkinter adafruit-circuitpython-ads1x15 adafruit-blinka pydantic --break-system-packages
 
 echo ""
-echo "[5/5] Criando serviço systemd para autostart..."
+echo "[5/5] Criando autostart via .desktop (método correto para interface gráfica)..."
 
-sudo bash -c "cat > $SERVICE_FILE << SERVICE
-[Unit]
-Description=BioVolts - Painel de Energia Solar
-After=graphical.target
+# Remove o serviço systemd antigo se existir
+if [ -f /etc/systemd/system/biovolts.service ]; then
+    sudo systemctl stop biovolts.service 2>/dev/null || true
+    sudo systemctl disable biovolts.service 2>/dev/null || true
+    sudo rm /etc/systemd/system/biovolts.service
+    sudo systemctl daemon-reload
+    echo "      Serviço systemd antigo removido."
+fi
 
-[Service]
-Type=simple
-User=$USER
-Environment=DISPLAY=:0
-Environment=XAUTHORITY=/home/$USER/.Xauthority
+# Cria a pasta autostart se não existir
+mkdir -p "$AUTOSTART_DIR"
+
+# Cria o arquivo .desktop
+cat > "$AUTOSTART_FILE" << DESKTOP
+[Desktop Entry]
+Type=Application
+Name=BioVolts
+Comment=Painel de Energia Solar
+Exec=/usr/bin/python3 $APP_DIR/main.py
 WorkingDirectory=$APP_DIR
-ExecStart=/usr/bin/python3 $APP_DIR/main.py
-Restart=on-failure
-RestartSec=5
+X-GNOME-Autostart-enabled=true
+DESKTOP
 
-[Install]
-WantedBy=graphical.target
-SERVICE"
-
-sudo systemctl daemon-reload
-sudo systemctl enable biovolts.service
+echo "      Arquivo criado em: $AUTOSTART_FILE"
 
 echo ""
 echo "================================================"
 echo "  Instalação concluída!"
 echo ""
 echo "  Comandos úteis:"
-echo "  Iniciar agora:   sudo systemctl start biovolts"
-echo "  Ver status:      sudo systemctl status biovolts"
-echo "  Ver logs:        journalctl -u biovolts -f"
-echo "  Parar:           sudo systemctl stop biovolts"
-echo "  Desativar:       sudo systemctl disable biovolts"
+echo "  Rodar agora:    python3 $APP_DIR/main.py"
+echo "  Ver autostart:  cat $AUTOSTART_FILE"
+echo "  Remover:        rm $AUTOSTART_FILE"
 echo "================================================"
 echo ""
-echo "  Reinicie o Raspberry Pi para ativar o autostart:"
+echo "  Reinicie para ativar o autostart:"
 echo "  sudo reboot"
 echo "================================================"
